@@ -1,0 +1,117 @@
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+             xmlns:g='urn:import:com.google.gwt.user.client.ui'
+             xmlns:progress="urn:import:edu.stanford.bmir.protege.web.client.progress"
+             xmlns:nohrUIElements="urn:import:edu.stanford.bmir.protege.web.client.nohrUIElements"
+             xmlns:cellview="urn:import:com.google.gwt.user.cellview.client">
+    <ui:with field="msg" type="edu.stanford.bmir.protege.web.client.Messages"/>
+    <ui:with field="wp" type="edu.stanford.bmir.protege.web.resources.WebProtegeClientBundle"/>
+    <ui:import field="edu.stanford.bmir.protege.web.shared.individuals.InstanceRetrievalMode.*"/>
+    <ui:style>
+        .main {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        padding: 1px;
+        box-sizing: border-box;
+        }
+        .typeFieldContainer {
+        margin-bottom: 0.3rem;
+        }
+        .queryEditor {
+        flex-grow: 0;
+        flex-shrink: 0;
+        padding: 2px;
+        margin: 1px;
+        border-bottom: 1px solid literal("var(--inlay-panel--background-color)");
+        }
+        .statusLabel {
+        flex-grow: 0;
+        flex-shrink: 0;
+        padding: 3px;
+        border-top: 1px solid literal("var(--inlay-panel--background-color)");
+        padding-right: 10px;
+        }
+        .answersTable {
+        flex-grow: 1;
+        flex-shrink: 1;
+        overflow: auto;
+        background-color: literal("var(--primary--background-color)");
+        border: 1px solid literal("var(--alternate--separator--color)");
+        margin: 1px;
+        }
+        .bottomBar {
+        background-color: literal("var(--inlay-panel--background-color)");
+        }
+        .button {
+        width: 15%;
+        height: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: baseline;
+        <!--background-color: literal("var(&#45;&#45;inlay-panel&#45;&#45;background-color)");-->
+        }
+        .split {
+        margin: 8px 0;
+        }
+        .typeGroup {
+        flex-grow: 0;
+        flex-shrink: 0;
+        }
+        .grid {
+        width: 100%;
+        height: 100%;
+        overflow-y: auto;
+        overflow-x: hidden;
+        }
+        .listGroup {
+        display: flex;
+        flex-direction: column;
+        flex-shrink: 1;
+        flex-grow: 1;
+        }
+        .levelField {
+        display: inline-block;
+        flex-wrap: nowrap;
+        flex-direction: row;
+        }
+        .levelRadio {
+        padding-left: 10px;
+        }
+        .pixels {
+        width: 100%;
+        height: 100%;
+        background-color: #EBEBEB;
+        }
+    </ui:style>
+    <g:HTMLPanel addStyleNames="{style.main} {wp.style.panelFilled}">
+        <progress:BusyViewImpl ui:field="busyView" visible="false"/>
+        <div class="{wp.style.formGroup} {style.typeGroup}">
+            <g:Label text="{msg.label_query}" addStyleNames="{wp.style.formLabel}"/>
+            <!--<text:PlaceholderTextBox ui:field="queryEditor" addStyleNames="{style.queryEditor}"
+                                     placeholder="{msg.enterSearchStringToFilterList}"/>-->
+            <nohrUIElements:ExtendedTextArea ui:field="queryEditor" visibleLines="3"/>
+        </div>
+        <div class="{style.button}">
+            <g:Button ui:field="execQueryButton" text="Execute"
+                      addStyleNames="{wp.buttons.button} {wp.buttons.inputButton}"/>
+        </div>
+        <div class="{style.split}"></div>
+        <g:Label text="{msg.label_query_answers}" addStyleNames="{wp.style.formLabel}"/>
+        <g:HTMLPanel addStyleNames="{style.pixels}">
+            <cellview:DataGrid ui:field="answersGrid" addStyleNames="{style.grid}"/>
+        </g:HTMLPanel>
+
+        <div class="{style.levelField}">
+            <div>
+                <g:CheckBox ui:field="showTrueAnswersCheckBox" text="true"/>
+                <g:CheckBox ui:field="showUndefinedAnswersCheckBox" text="undefined"/>
+                <g:CheckBox ui:field="showInconsistentAnswersCheckBox" text="inconsistent"/>
+            </div>
+        </div>
+        <div class="{style.split}"></div>
+
+
+
+
+    </g:HTMLPanel>
+</ui:UiBinder>

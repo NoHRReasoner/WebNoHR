@@ -1,0 +1,117 @@
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+             xmlns:g='urn:import:com.google.gwt.user.client.ui'
+>
+    <ui:with field="msg" type="edu.stanford.bmir.protege.web.client.Messages"/>
+    <ui:with field="wp" type="edu.stanford.bmir.protege.web.resources.WebProtegeClientBundle"/>
+    <ui:style>
+        .main {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+        }
+        .col {
+        max-width: 400px;
+        }
+        .listGroup {
+        display: flex;
+        flex-direction: column;
+        flex-shrink: 1;
+        flex-grow: 1;
+        }
+        .dbMappings {
+        flex-grow: 1;
+        flex-shrink: 1;
+        overflow: auto;
+        background-color: literal("var(--primary--background-color)");
+        border: 1px solid literal("var(--alternate--separator--color)");
+        margin: 1px;
+        }
+        .criteriaContainer {
+        flex-grow: 0;
+        flex-shrink: 0;
+        margin-bottom: 10px;
+        }
+        .queryPanel {
+        padding: 10px;
+        padding-bottom: 20px;
+        }
+        .button {
+        width: 15%;
+        height: 20px;
+        padding-bottom: 12px;
+        display: flex;
+        flex-direction: column;
+        align-items: baseline;
+        <!--background-color: literal("var(&#45;&#45;inlay-panel&#45;&#45;background-color)");-->
+        }
+        .addbutton {
+        width: 15%;
+        height: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: baseline;
+        <!--background-color: literal("var(&#45;&#45;inlay-panel&#45;&#45;background-color)");-->
+        }
+        .buttonPanel {
+        flex-grow:      1;
+        flex-shrink:    1;
+        overflow-y:     visible;
+        padding-left:   100px;
+        padding-right:  100px;
+        padding-top:    8px;
+        padding-bottom: 12px;
+        }
+        }
+        .split {
+        margin: 12px 0;
+        }
+    </ui:style>
+    <g:HTMLPanel addStyleNames="{style.main}">
+        <!--<div class="{wp.style.formGroup}">
+            <g:Label text="{msg.displayName_settings_project_priorityList_title}" addStyleNames="{wp.style.formLabel}"/>
+            <div class="{style.col}">
+                <editor:ValueListFlexEditorImpl ui:field="databaseSettingsListFlexEditor" reorderEnabled="true"/>
+            </div>
+        </div>-->
+
+        <!--<div class="{style.listGroup}">
+            <list:ListBox ui:field="dbMappings" addStyleNames="{style.dbMappings}"/>
+        </div>-->
+        <div class="{wp.style.formGroup}">
+            <g:Label text="ODBC driver unique name" addStyleNames="{wp.style.formLabel}"/>
+            <g:TextBox ui:field="odbcTextBox"/>
+        </div>
+        <div class="{wp.style.formGroup}">
+            <g:Label text="Database name" addStyleNames="{wp.style.formLabel}"/>
+            <g:TextBox ui:field="databaseNameTextBox"/>
+        </div>
+        <div class="{wp.style.formGroup}">
+            <g:Label text="Database type" addStyleNames="{wp.style.formLabel}"/>
+            <g:ListBox ui:field="databaseTypeListBox" visibleItemCount="1"/>
+        </div>
+        <div class="{wp.style.formGroup}">
+            <g:Label text="Username" addStyleNames="{wp.style.formLabel}"/>
+            <g:TextBox ui:field="databaseUsernameTextBox"/>
+        </div>
+        <div class="{wp.style.formGroup}">
+            <g:Label text="Password" addStyleNames="{wp.style.formLabel}"/>
+            <g:PasswordTextBox ui:field="databasePasswordTextBox"/>
+        </div>
+        <div class="{style.button}">
+            <g:Button ui:field="deleteButton" text="Delete"
+                      addStyleNames="{wp.buttons.button} {wp.buttons.inputButton}"/>
+        </div>
+        <!--<div class="{style.split}"></div>-->
+        <div class="{style.addbutton}">
+            <g:Button ui:field="addButton" text="Add Section"
+                      addStyleNames="{wp.buttons.button} {wp.buttons.addSectionButton}"/>
+        </div>
+
+        <!--<g:Button ui:field="addButton" text="add"
+                  addStyleNames="{wp.buttons.button} {wp.buttons.inputButton}"/>-->
+
+        <!--<g:HTMLPanel addStyleNames="{style.queryPanel}">
+            <g:SimplePanel ui:field="criteriaContainer" addStyleNames="{style.criteriaContainer}"/>
+        </g:HTMLPanel>-->
+    </g:HTMLPanel>
+</ui:UiBinder>

@@ -1,0 +1,31 @@
+{
+  "direction": "ROW",
+  "children": [
+    {
+      "weight": 0.5,
+      "node": {
+        "direction": "COLUMN",
+        "children": [
+          {
+            "weight": 0.5,
+            "node": {
+              "portlet": "portlets.ClassHierarchy"
+            }
+          },
+          {
+            "weight": 0.5,
+            "node": {
+              "portlet": "portlets.NoHRRules"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "weight": 0.5,
+      "node": {
+        "portlet": "portlets.NoHRDBMappings"
+      }
+    }
+  ]
+}
