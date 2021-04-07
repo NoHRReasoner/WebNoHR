@@ -236,6 +236,7 @@ public class ExecNohrQueryActionHandler extends AbstractProjectActionHandler<Exe
             logger.info("Converting answers for UI format for {} in {} ms", projectId, mappingTime.elapsed(MILLISECONDS));
 
         } catch (OWLExpressionParserException e) {
+            reentrantLock.unlock();
             logger.info("Query is not valid in {}", projectId);
             return new ExecNohrQueryResult(projectId,
                     eventList, null, null,
@@ -256,7 +257,6 @@ public class ExecNohrQueryActionHandler extends AbstractProjectActionHandler<Exe
                     eventList, null, null,
                     NohrResponseCodes.INCONSISTENTONTOLOGY_ERROR);
         } catch (IPPrologError e) {
-            System.out.println(e);
             logger.info("prolog runtime error in {} ; Error :", projectId, e);
             return new ExecNohrQueryResult(projectId,
                     eventList, null, null,
