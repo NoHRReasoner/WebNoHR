@@ -1,11 +1,15 @@
 package edu.stanford.bmir.protege.web.server.nohrdata;
 
 import edu.stanford.bmir.protege.web.server.access.AccessManager;
+import edu.stanford.bmir.protege.web.server.app.WebProtegeProperties;
 import edu.stanford.bmir.protege.web.server.change.HasApplyChanges;
 import edu.stanford.bmir.protege.web.server.dispatch.AbstractProjectActionHandler;
 import edu.stanford.bmir.protege.web.server.dispatch.ExecutionContext;
 import edu.stanford.bmir.protege.web.server.entity.EntityNodeRenderer;
 import edu.stanford.bmir.protege.web.server.events.EventManager;
+import edu.stanford.bmir.protege.web.server.filemanager.ConfigDirectorySupplier;
+import edu.stanford.bmir.protege.web.server.filemanager.ConfigInputStreamSupplier;
+import edu.stanford.bmir.protege.web.server.inject.WebProtegePropertiesProvider;
 import edu.stanford.bmir.protege.web.shared.access.BuiltInAction;
 import edu.stanford.bmir.protege.web.shared.dispatch.actions.UploadRulesAction;
 import edu.stanford.bmir.protege.web.shared.dispatch.actions.UploadRulesResult;
@@ -65,7 +69,8 @@ public class UploadRulesActionHandler extends AbstractProjectActionHandler<Uploa
     @Nonnull
     private final Lock reentrantLock = new ReentrantLock();
 
-    private final String UPLOADS_PATH = "C:\\srv\\webprotege\\uploads\\";
+    //private final String UPLOADS_PATH = "C:\\srv\\webprotege\\uploads\\";
+    private final File UPLOADS_PATH = getWebProtegeProperties().getDataDirectory();
 
     @Inject
     public UploadRulesActionHandler(@Nonnull AccessManager accessManager,
@@ -82,6 +87,13 @@ public class UploadRulesActionHandler extends AbstractProjectActionHandler<Uploa
     }
 
     @Nonnull
+    private static WebProtegeProperties getWebProtegeProperties() {
+        ConfigInputStreamSupplier configInputStreamSupplier = new ConfigInputStreamSupplier(new ConfigDirectorySupplier());
+        WebProtegePropertiesProvider propertiesProvider = new WebProtegePropertiesProvider(configInputStreamSupplier);
+        return propertiesProvider.get();
+    }
+
+    @Nonnull
     @Override
     protected Iterable<BuiltInAction> getRequiredExecutableBuiltInActions() {
         return Arrays.asList(EDIT_NOHR, UPLOAD_RULE);
@@ -95,7 +107,7 @@ public class UploadRulesActionHandler extends AbstractProjectActionHandler<Uploa
 
         EventList<ProjectEvent<?>> eventList = eventManager.getEventsFromTag(eventTag);
         List<NohrRule> rules = new LinkedList<>();
-        File rulesFile = new File(UPLOADS_PATH + action.getFile());
+        File rulesFile = new File(UPLOADS_PATH + "/uploads/" + action.getFile());
         BufferedReader reader = null;
         int lineNumber = 1;
 
@@ -124,6 +136,11 @@ public class UploadRulesActionHandler extends AbstractProjectActionHandler<Uploa
         } catch (OWLExpressionParserException e) {
             logger.info("File contains rule(s) that are not valid in {}", projectId);
             System.out.println("File contains rule(s) that are not valid in " + projectId);
+            try {
+                reader.close();
+            } catch (IOException err) {
+                err.printStackTrace();
+            }
             return new UploadRulesResult(projectId,
                     eventList,
                     null, lineNumber, NohrResponseCodes.PARSER_ERROR);
@@ -131,19 +148,16 @@ public class UploadRulesActionHandler extends AbstractProjectActionHandler<Uploa
             logger.info("Failed to insert rule(s) to database in {}", projectId);
             logger.info(e.toString());
             System.out.println("Failed to insert rule(s) to database in " + projectId);
+            System.out.println(e);
+
             return new UploadRulesResult(projectId,
                     eventList,
                     null, lineNumber, NohrResponseCodes.DATABASE_ERROR);
         } finally {
             logger.info("Deleting temporary file {} in {}", rulesFile.getName(), projectId);
             System.out.println("Deleting temporary file " + rulesFile.getName() + " in " + projectId);
+            rulesFile.delete();
             reentrantLock.unlock();
-            try {
-                reader.close();
-                rulesFile.delete();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
 
             /*try {
                 Files.delete(Paths.get(UPLOADS_PATH+action.getFile()));

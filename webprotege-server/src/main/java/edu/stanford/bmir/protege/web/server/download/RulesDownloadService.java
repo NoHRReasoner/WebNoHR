@@ -1,6 +1,10 @@
 package edu.stanford.bmir.protege.web.server.download;
 
 import com.google.common.util.concurrent.Striped;
+import edu.stanford.bmir.protege.web.server.app.WebProtegeProperties;
+import edu.stanford.bmir.protege.web.server.filemanager.ConfigDirectorySupplier;
+import edu.stanford.bmir.protege.web.server.filemanager.ConfigInputStreamSupplier;
+import edu.stanford.bmir.protege.web.server.inject.WebProtegePropertiesProvider;
 import edu.stanford.bmir.protege.web.server.nohrdata.NohrRepository;
 import edu.stanford.bmir.protege.web.server.project.ProjectDetailsManager;
 import edu.stanford.bmir.protege.web.server.revision.HeadRevisionNumberFinder;
@@ -16,6 +20,7 @@ import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -67,7 +72,8 @@ public class RulesDownloadService {
     @Nonnull
     private final Lock reentrantLock = new ReentrantLock();
 
-    private final String UPLOADS_PATH = "C:\\srv\\webprotege\\uploads\\";
+    //private final String UPLOADS_PATH = "C:\\srv\\webprotege\\uploads\\";
+    private final File UPLOADS_PATH = getWebProtegeProperties().getDataDirectory();
 
     @Inject
     public RulesDownloadService(@Nonnull @DownloadGeneratorExecutor ExecutorService downloadGeneratorExecutor,
@@ -84,6 +90,13 @@ public class RulesDownloadService {
         this.nohrRepository = checkNotNull(nohrRepository);
     }
 
+    @Nonnull
+    private static WebProtegeProperties getWebProtegeProperties() {
+        ConfigInputStreamSupplier configInputStreamSupplier = new ConfigInputStreamSupplier(new ConfigDirectorySupplier());
+        WebProtegePropertiesProvider propertiesProvider = new WebProtegePropertiesProvider(configInputStreamSupplier);
+        return propertiesProvider.get();
+    }
+
     public void downloadRules(@Nonnull UserId requester,
                               @Nonnull ProjectId projectId,
                               @Nonnull RevisionNumber revisionNumber,
@@ -92,14 +105,14 @@ public class RulesDownloadService {
 
         String filename = "nohrRules" + "_" + projectId.getId() + "_" + requester.getUserName() + ".tmp";
         List<NohrRule> rules = nohrRepository.getRules(projectId);
-        Path downloadPath = Paths.get(UPLOADS_PATH + filename);
+        Path downloadPath = Paths.get(UPLOADS_PATH + "/uploads/" + filename);
         BufferedWriter writer = null;
 
         logger.info("Writing rules to file in server in {}",projectId);
         System.out.println("Writing rules to file in server in "+projectId);
         reentrantLock.lock();
         try {
-            writer = new BufferedWriter(new FileWriter(UPLOADS_PATH + filename));
+            writer = new BufferedWriter(new FileWriter(UPLOADS_PATH + "/uploads/" + filename));
             Iterator<NohrRule> iterator = rules.iterator();
             while (iterator.hasNext()) {
                 writer.write(iterator.next().getRule() + "\n");

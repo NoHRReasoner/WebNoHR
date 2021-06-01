@@ -1,11 +1,15 @@
 package edu.stanford.bmir.protege.web.server.nohrdata;
 
 import edu.stanford.bmir.protege.web.server.access.AccessManager;
+import edu.stanford.bmir.protege.web.server.app.WebProtegeProperties;
 import edu.stanford.bmir.protege.web.server.change.HasApplyChanges;
 import edu.stanford.bmir.protege.web.server.dispatch.AbstractProjectActionHandler;
 import edu.stanford.bmir.protege.web.server.dispatch.ExecutionContext;
 import edu.stanford.bmir.protege.web.server.entity.EntityNodeRenderer;
 import edu.stanford.bmir.protege.web.server.events.EventManager;
+import edu.stanford.bmir.protege.web.server.filemanager.ConfigDirectorySupplier;
+import edu.stanford.bmir.protege.web.server.filemanager.ConfigInputStreamSupplier;
+import edu.stanford.bmir.protege.web.server.inject.WebProtegePropertiesProvider;
 import edu.stanford.bmir.protege.web.server.revision.RevisionManager;
 import edu.stanford.bmir.protege.web.shared.access.BuiltInAction;
 import edu.stanford.bmir.protege.web.shared.dispatch.actions.UploadDBMappingAction;
@@ -73,7 +77,8 @@ public class UploadDBMappingActionHandler extends AbstractProjectActionHandler<U
     @Nonnull
     private final Lock reentrantLock = new ReentrantLock();
 
-    private final String UPLOADS_PATH = "C:\\srv\\webprotege\\uploads\\";
+    //private final String UPLOADS_PATH = "C:\\srv\\webprotege\\uploads\\";
+    private final File UPLOADS_PATH = getWebProtegeProperties().getDataDirectory();
 
     @Inject
     public UploadDBMappingActionHandler(@Nonnull AccessManager accessManager,
@@ -94,6 +99,13 @@ public class UploadDBMappingActionHandler extends AbstractProjectActionHandler<U
     }
 
     @Nonnull
+    private static WebProtegeProperties getWebProtegeProperties() {
+        ConfigInputStreamSupplier configInputStreamSupplier = new ConfigInputStreamSupplier(new ConfigDirectorySupplier());
+        WebProtegePropertiesProvider propertiesProvider = new WebProtegePropertiesProvider(configInputStreamSupplier);
+        return propertiesProvider.get();
+    }
+
+    @Nonnull
     @Override
     protected Iterable<BuiltInAction> getRequiredExecutableBuiltInActions() {
         return Arrays.asList(EDIT_NOHR, UPLOAD_DBMAPPING);
@@ -108,7 +120,7 @@ public class UploadDBMappingActionHandler extends AbstractProjectActionHandler<U
         EventList<ProjectEvent<?>> eventList = eventManager.getEventsFromTag(eventTag);
         List<NohrDBMapping> dbMappings = new LinkedList<>();
         List<NohrDBMapping> uiMappings = new LinkedList<>();
-        File dbMappingFile = new File(UPLOADS_PATH + action.getFile());
+        File dbMappingFile = new File(UPLOADS_PATH + "/uploads/" + action.getFile());
         BufferedReader reader = null;
 
         boolean duplicatedDBMapping;
