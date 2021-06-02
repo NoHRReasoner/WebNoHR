@@ -120,8 +120,9 @@ public class UploadRulesActionHandler extends AbstractProjectActionHandler<Uploa
             String strCurrentLine;
             while ((strCurrentLine = reader.readLine()) != null) {
                 if(strCurrentLine.trim().length() > 0) {
-                    parser.checkRule(strCurrentLine);
-                    rules.add(new NohrRuleImpl(strCurrentLine));
+                    String rule = strCurrentLine.split("\\.")[0];
+                    parser.checkRule(rule);
+                    rules.add(new NohrRuleImpl(rule));
                 }
                 lineNumber++;
             }

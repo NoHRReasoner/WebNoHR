@@ -115,7 +115,7 @@ public class RulesDownloadService {
             writer = new BufferedWriter(new FileWriter(UPLOADS_PATH + "/uploads/" + filename));
             Iterator<NohrRule> iterator = rules.iterator();
             while (iterator.hasNext()) {
-                writer.write(iterator.next().getRule() + "\n");
+                writer.write(iterator.next().getRule() + ".\n");
             }
 
             writer.close();
